@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オセロ - Othello</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 data-i18n="title">オセロ</h1>
+            <button id="lang-toggle" class="lang-btn" title="Switch Language">EN</button>
+        </header>
+
+        <div class="score-board">
+            <div class="score black-score">
+                <span class="disc-icon black"></span>
+                <span data-i18n="black">黒</span>:
+                <span id="black-count">2</span>
+            </div>
+            <div class="turn-indicator">
+                <span id="turn-text" data-i18n="blackTurn">黒の番です</span>
+            </div>
+            <div class="score white-score">
+                <span class="disc-icon white"></span>
+                <span data-i18n="white">白</span>:
+                <span id="white-count">2</span>
+            </div>
+        </div>
+
+        <div id="board" class="board"></div>
+
+        <div id="message" class="message"></div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label data-i18n="mode">モード</label>
+                <select id="mode-select">
+                    <option value="cpu" data-i18n="vsCPU">CPU対戦</option>
+                    <option value="pvp" data-i18n="vsPlayer">2人対戦</option>
+                </select>
+            </div>
+            <div class="control-group" id="difficulty-group">
+                <label data-i18n="difficulty">難易度</label>
+                <select id="difficulty-select">
+                    <option value="easy" data-i18n="easy">弱い</option>
+                    <option value="normal" selected data-i18n="normal">普通</option>
+                    <option value="hard" data-i18n="hard">強い</option>
+                </select>
+            </div>
+            <div class="control-group" id="player-color-group">
+                <label data-i18n="yourColor">あなたの色</label>
+                <select id="player-color-select">
+                    <option value="black" data-i18n="black">黒</option>
+                    <option value="white" data-i18n="white">白</option>
+                </select>
+            </div>
+            <button id="new-game-btn" class="btn" data-i18n="newGame">新しいゲーム</button>
+        </div>
+    </div>
+
+    <div id="result-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="result-title"></h2>
+            <p id="result-detail"></p>
+            <button id="result-new-game" class="btn" data-i18n="newGame">新しいゲーム</button>
+        </div>
+    </div>
+
+    <script src="js/game.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>
