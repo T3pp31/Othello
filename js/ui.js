@@ -56,6 +56,7 @@ class UI {
     constructor() {
         this.game = new Game();
         this.ai = new AI();
+        this.sound = new SoundManager();
         this.lang = 'ja';
         this.mode = 'cpu';
         this.difficulty = 'normal';
@@ -75,6 +76,7 @@ class UI {
         this.playerColorGroup = document.getElementById('player-color-group');
         this.newGameBtn = document.getElementById('new-game-btn');
         this.langToggle = document.getElementById('lang-toggle');
+        this.soundToggle = document.getElementById('sound-toggle');
         this.resultModal = document.getElementById('result-modal');
         this.resultTitle = document.getElementById('result-title');
         this.resultDetail = document.getElementById('result-detail');
@@ -124,6 +126,14 @@ class UI {
             this.updateLanguage();
         });
 
+        this.soundToggle.addEventListener('click', () => {
+            const enabled = this.sound.toggle();
+            this.soundToggle.textContent = enabled ? '\u{1F50A}' : '\u{1F507}';
+            this.soundToggle.title = enabled
+                ? (this.lang === 'ja' ? '音オン' : 'Sound ON')
+                : (this.lang === 'ja' ? '音オフ' : 'Sound OFF');
+        });
+
         this.resultModal.addEventListener('click', (e) => {
             if (e.target === this.resultModal) {
                 this.resultModal.classList.add('hidden');
@@ -150,7 +160,10 @@ class UI {
 
         if (this.mode === 'cpu' && this.game.currentPlayer !== this.playerColor) return;
 
-        if (!this.game.isValidMove(row, col, this.game.currentPlayer)) return;
+        if (!this.game.isValidMove(row, col, this.game.currentPlayer)) {
+            this.sound.invalid();
+            return;
+        }
 
         this.makePlayerMove(row, col);
     }
@@ -176,6 +189,7 @@ class UI {
             }
 
             if (result === 'pass') {
+                this.sound.pass();
                 const passedPlayer = this.game.opponent(this.game.currentPlayer);
                 const playerName = passedPlayer === BLACK ? this.t('black') : this.t('white');
                 this.showMessage(this.t('pass', { player: playerName }));
@@ -218,6 +232,7 @@ class UI {
                 }
 
                 if (result === 'pass') {
+                    this.sound.pass();
                     const passedPlayer = this.game.opponent(this.game.currentPlayer);
                     const playerName = passedPlayer === BLACK ? this.t('black') : this.t('white');
                     this.showMessage(this.t('pass', { player: playerName }));
@@ -232,12 +247,14 @@ class UI {
 
     animateMove(row, col, player, flipped, callback) {
         this.renderDisc(row, col, player, 'placing');
+        this.sound.place();
 
         setTimeout(() => {
             let flipDelay = 0;
             for (const [fr, fc] of flipped) {
                 setTimeout(() => {
                     this.flipDisc(fr, fc, player);
+                    this.sound.flip();
                 }, flipDelay);
                 flipDelay += 60;
             }
@@ -354,18 +371,24 @@ class UI {
         if (this.mode === 'cpu') {
             if (winner === null) {
                 title = this.t('draw');
+                this.sound.draw();
             } else if (winner === this.playerColor) {
                 title = this.t('youWin');
+                this.sound.win();
             } else {
                 title = this.t('youLose');
+                this.sound.lose();
             }
         } else {
             if (winner === null) {
                 title = this.t('draw');
+                this.sound.draw();
             } else if (winner === BLACK) {
                 title = this.t('blackWins');
+                this.sound.win();
             } else {
                 title = this.t('whiteWins');
+                this.sound.win();
             }
         }
 
