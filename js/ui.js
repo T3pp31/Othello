@@ -77,6 +77,7 @@ class UI {
         this.newGameBtn = document.getElementById('new-game-btn');
         this.langToggle = document.getElementById('lang-toggle');
         this.soundToggle = document.getElementById('sound-toggle');
+        this.volumeSlider = document.getElementById('volume-slider');
         this.resultModal = document.getElementById('result-modal');
         this.resultTitle = document.getElementById('result-title');
         this.resultDetail = document.getElementById('result-detail');
@@ -132,6 +133,19 @@ class UI {
             this.soundToggle.title = enabled
                 ? (this.lang === 'ja' ? '音オン' : 'Sound ON')
                 : (this.lang === 'ja' ? '音オフ' : 'Sound OFF');
+            this.volumeSlider.disabled = !enabled;
+        });
+
+        this.volumeSlider.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value, 10) / 100;
+            this.sound.setVolume(val);
+            if (val === 0) {
+                this.sound.enabled = false;
+                this.soundToggle.textContent = '\u{1F507}';
+            } else if (!this.sound.enabled) {
+                this.sound.enabled = true;
+                this.soundToggle.textContent = '\u{1F50A}';
+            }
         });
 
         this.resultModal.addEventListener('click', (e) => {

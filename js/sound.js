@@ -3,7 +3,11 @@ class SoundManager {
     constructor() {
         this.enabled = true;
         this.audioCtx = null;
-        this.volume = 0.3;
+        this.volume = 0.7;
+    }
+
+    setVolume(val) {
+        this.volume = val;
     }
 
     getContext() {

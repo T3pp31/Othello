@@ -11,7 +11,10 @@
         <header>
             <h1 data-i18n="title">オセロ</h1>
             <div class="header-btns">
-                <button id="sound-toggle" class="icon-btn" title="音オン">&#x1F50A;</button>
+                <div class="volume-control">
+                    <button id="sound-toggle" class="icon-btn" title="音オン">&#x1F50A;</button>
+                    <input id="volume-slider" type="range" min="0" max="100" value="70" class="volume-slider" title="音量">
+                </div>
                 <button id="lang-toggle" class="lang-btn" title="Switch Language">EN</button>
             </div>
         </header>
