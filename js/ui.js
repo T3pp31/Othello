@@ -63,6 +63,8 @@ class UI {
         this.playerColor = BLACK;
         this.isProcessing = false;
         this.lastMove = null;
+        this._sessionId = 0;
+        this._timers = new Set();
 
         this.boardEl = document.getElementById('board');
         this.blackCountEl = document.getElementById('black-count');
@@ -96,6 +98,25 @@ class UI {
             }
         }
         return text;
+    }
+
+    _schedule(fn, delay) {
+        const sessionId = this._sessionId;
+        const timerId = setTimeout(() => {
+            this._timers.delete(timerId);
+            if (sessionId !== this._sessionId) return;
+            fn();
+        }, delay);
+        this._timers.add(timerId);
+        return timerId;
+    }
+
+    _resetSession() {
+        for (const timerId of this._timers) {
+            clearTimeout(timerId);
+        }
+        this._timers.clear();
+        this._sessionId++;
     }
 
     setupEventListeners() {
@@ -219,7 +240,7 @@ class UI {
         this.isProcessing = true;
         this.turnTextEl.textContent = this.t('cpuThinking');
 
-        setTimeout(() => {
+        this._schedule(() => {
             const move = this.ai.getBestMove(this.game, this.difficulty);
             if (!move) {
                 this.isProcessing = false;
@@ -263,17 +284,17 @@ class UI {
         this.renderDisc(row, col, player, 'placing');
         this.sound.place();
 
-        setTimeout(() => {
+        this._schedule(() => {
             let flipDelay = 0;
             for (const [fr, fc] of flipped) {
-                setTimeout(() => {
+                this._schedule(() => {
                     this.flipDisc(fr, fc, player);
                     this.sound.flip();
                 }, flipDelay);
                 flipDelay += 60;
             }
 
-            setTimeout(() => {
+            this._schedule(() => {
                 this.updateScore();
                 if (callback) callback();
             }, flipDelay + 400);
@@ -300,7 +321,7 @@ class UI {
         if (!disc) return;
 
         disc.classList.add('flipping');
-        setTimeout(() => {
+        this._schedule(() => {
             disc.className = `disc ${newColor === BLACK ? 'black' : 'white'}`;
         }, 250);
     }
@@ -372,7 +393,7 @@ class UI {
 
     showMessage(msg) {
         this.messageEl.textContent = msg;
-        setTimeout(() => {
+        this._schedule(() => {
             this.messageEl.textContent = '';
         }, 2000);
     }
@@ -412,12 +433,13 @@ class UI {
             white: score.white
         });
 
-        setTimeout(() => {
+        this._schedule(() => {
             this.resultModal.classList.remove('hidden');
         }, 500);
     }
 
     newGame() {
+        this._resetSession();
         this.resultModal.classList.add('hidden');
         this.game = new Game();
         this.lastMove = null;
