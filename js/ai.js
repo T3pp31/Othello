@@ -59,7 +59,7 @@ class AI {
             const clone = game.clone();
             const result = clone.switchTurn();
             if (result === 'gameover') {
-                return this.evaluate(game, aiPlayer);
+                return this.evaluate(clone, aiPlayer);
             }
             return this.minimax(clone, depth - 1, alpha, beta, !isMaximizing, aiPlayer);
         }
